@@ -3,14 +3,11 @@
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
-            "command": "C:\\mingw64\\bin\\g++.exe",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
-                "Deck.cpp",   // Add other necessary .cpp files here
-                "Player.cpp",
-                "Card.cpp", // Add Player.cpp or any other source file
                 "-o",
                 "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
