@@ -1,15 +1,13 @@
 #include "MonsterCards.hpp"
 
-
 std::vector<MonsterData> getMonsterData()
 {
-    return 
-    {
+    return {
         {"3,872 Orcs", "Monster", 10, {{"LoseLevels", 2}}},
         {"Amazon", "Monster", 8, {{"LoseItem", 1}}},
         {"Bigfoot", "Monster", 12, {{"LoseItem", 1}}},
         {"Bullrog", "Monster", 18, {{"LoseLevels", 3}, {"DiscardHand", 1}}},
-        {"Crabs", "Monster", 6, {{"LoseItem", 1}}}, 
+        {"Crabs", "Monster", 6, {{"LoseItem", 1}}},
         {"Drooling Slime", "Monster", 1, {{"LoseItem", 1}}},
         {"Face Sucker", "Monster", 8, {{"LoseItem", 1}, {"LoseLevels", 1}}},
         {"Floating Nose", "Monster", 10, {{"LoseLevels", 2}}},
@@ -40,12 +38,10 @@ std::vector<MonsterData> getMonsterData()
         {"Undead Horse", "Monster", 4, {{"LoseLevels", 1}, {"LoseItem", 1}}},
         {"Unspeakably Awful Indescribable Horror", "Monster", 14, {{"LoseLevels", 2}, {"LoseItem", 3}}},
         {"Wannabe Vampire", "Monster", 12, {{"LoseLevels", 2}, {"DiscardCards", 1}}},
-        {"Wight Brothers", "Monster", 20, {{"LoseLevels", 2}, {"LoseTreasures", 2}}}
-        };
+        {"Wight Brothers", "Monster", 20, {{"LoseLevels", 2}, {"LoseTreasures", 2}}}};
 }
 
-
-void displayMonsterDetails(const MonsterData &monster) //Refactor for usability on all cards
+void displayMonsterDetails(const MonsterData &monster) // Refactor for usability on all cards
 {
     std::cout << "You drew a Monster Card!\n";
     std::cout << "Name: " << monster.name << "\n";
