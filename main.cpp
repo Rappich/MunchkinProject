@@ -15,24 +15,24 @@ int main()
     std::cin >> inputName;
     Player player2 = inputName;
     Munchkin.AddPlayer(player1);
-    //Munchkin.AddPlayer(player2);
+    // Munchkin.AddPlayer(player2);
 
-     Munchkin.startGame();
-     bool playerWin = false;
-     do
-     {
-         for (Player &player : Munchkin.GetPlayerList())
-         {
-             Munchkin.playerTurn(player);
-             playerWin = Munchkin.checkVictory(Munchkin.GetPlayerList());
-             if(playerWin)
-             {
-                 break;
-             }
-         }
-     } while (!playerWin);
+    Munchkin.startGame();
+    bool playerWin = false;
+    do
+    {
+        for (Player &player : Munchkin.GetPlayerList())
+        {
+            Munchkin.playerTurn(player);
+            playerWin = Munchkin.checkVictory(Munchkin.GetPlayerList());
+            if (playerWin)
+            {
+                break;
+            }
+        }
+    } while (!playerWin);
 
-       // Get all monster data
+    // Get all monster data
     // auto monsters = getMonsterData();
 
     // //Simulate drawing a random monster card
@@ -40,16 +40,14 @@ int main()
     // int randomIndex = rand() % monsters.size();
     // const MonsterData &drawnMonster = monsters[randomIndex];
 
-    //Display the drawn monster
-    //displayMonsterDetails(drawnMonster);
+    // Display the drawn monster
+    // displayMonsterDetails(drawnMonster);
 
-    //If needed, initialize the monster as a Card for further actions
-    //Card monsterCard = initializeMonster(drawnMonster);
+    // If needed, initialize the monster as a Card for further actions
+    // Card monsterCard = initializeMonster(drawnMonster);
 
-    //Example: Use the monsterCard in combat or other logic
-    //std::cout << "The monster " << monsterCard.name << " is ready for combat!\n";
+    // Example: Use the monsterCard in combat or other logic
+    // std::cout << "The monster " << monsterCard.name << " is ready for combat!\n";
 
-    return 0; 
-
-    
+    return 0;
 }
