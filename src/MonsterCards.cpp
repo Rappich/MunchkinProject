@@ -1,5 +1,9 @@
-#include "MonsterCards.hpp"
 
+#include "MonsterCards.hpp"
+#include <cstdlib>
+#include <ctime>
+
+// Returns a collection of predefined monster data
 std::vector<MonsterData> getMonsterData()
 {
     return {
@@ -41,61 +45,68 @@ std::vector<MonsterData> getMonsterData()
         {"Wight Brothers", "Monster", 20, {{"LoseLevels", 2}, {"LoseTreasures", 2}}}};
 }
 
-void displayMonsterDetails(const MonsterData &monster) // Refactor for usability on all cards
+// Displays monster details (generalized for future card types)
+void displayMonsterDetails(const MonsterData &monster)
 {
-    std::cout << "You drew a Monster Card!\n";
-    std::cout << "Name: " << monster.name << "\n";
+    std::cout << "==================\n";
+    std::cout << "Monster Card: " << monster.name << "\n";
     std::cout << "Type: " << monster.type << "\n";
     std::cout << "Level: " << monster.level << "\n";
     std::cout << "Bad Stuff:\n";
-
-    for (const auto &effect : monster.badStuff)
+    for (const auto &[effect, value] : monster.badStuff)
     {
-        std::cout << "- " << effect.first << ": " << effect.second << "\n";
+        std::cout << " - " << effect << ": " << value << "\n";
     }
-    std::cout << "\n";
+    std::cout << "==================\n\n";
 }
 
-Card initializeMonster(const MonsterData &monster)
+// Initializes a MonsterCard object from MonsterData
+MonsterCard initializeMonster(const MonsterData &monster)
 {
-    return Card(monster.name, monster.type, monster.level, monster.badStuff);
+    return MonsterCard(monster.name, monster.level, monster.badStuff);
 }
 
+// Applies penalties to the player based on bad stuff
 void applyBadStuff(Player &player, const std::map<std::string, int> &badStuff)
 {
-    for (const auto &effect : badStuff)
+    for (const auto &[effect, value] : badStuff)
     {
-        if (effect.first == "LoseLevels")
+        if (effect == "LoseLevels")
         {
-            for (int i = 0; i < effect.second; ++i)
+            for (int i = 0; i < value; ++i)
             {
                 player.levelDown();
             }
         }
-        else if (effect.first == "LoseItem")
+        else if (effect == "LoseItem")
         {
             auto equippedItems = player.getEquippedItems();
             if (!equippedItems.empty())
             {
-                srand(time(0));
+                srand(static_cast<unsigned>(time(0)));
                 int randomIndex = rand() % equippedItems.size();
                 Card itemLost = equippedItems[randomIndex];
                 player.unequipItem(itemLost);
                 player.removeItemFromInventory(itemLost);
                 std::cout << player.getName() << " lost a random item: " << itemLost.name << ".\n";
             }
-            else if (effect.first == "DiscardHand")
-            {
-                player.getInventory().clear();
-            }
-            else if (effect.first == "Death")
-            {
-                std::cout << player.getName() << " dies. Game over for them!\n";
-            }
             else
             {
-                std::cout << "Unhandled bad stuff: " << effect.first << "\n";
+                std::cout << player.getName() << " has no items to lose!\n";
             }
+        }
+        else if (effect == "DiscardHand")
+        {
+            player.getInventory().clear();
+            std::cout << player.getName() << " discarded their entire hand.\n";
+        }
+        else if (effect == "Death")
+        {
+            std::cout << player.getName() << " dies. Game over for them!\n";
+        }
+        else
+        {
+            std::cout << "Unhandled bad stuff: " << effect << "\n";
         }
     }
 }

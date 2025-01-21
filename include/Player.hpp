@@ -3,41 +3,53 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include <iostream>
 #include <algorithm>
 #include "Card.hpp"
+#include "ClassCards.hpp"
+#include "RaceCards.hpp"
+#include "ItemCards.hpp"
 
-class Player 
+class Player
 {
 private:
-    std::string name;
-    int level;
-    std::vector<Card> inventory;
-    std::vector<Card> equippedItems; 
-    std::string characterClass;   
-    std::string race;             
-    int combatStrength;           
+    std::string name;                                     // Player's name
+    int level;                                            // Player's current level
+    int combatStrength;                                   // Player's calculated combat strength
+    std::vector<std::unique_ptr<Card>> inventory;         // Cards in the player's possession
+    std::vector<std::unique_ptr<ItemCard>> equippedItems; // Equipped item cards
+    std::unique_ptr<ClassCard> characterClass;            // Player's current class
+    std::unique_ptr<RaceCard> race;                       // Player's current race
 
 public:
-    Player(std::string playerName);
+    // Constructor
+    explicit Player(std::string playerName);
+
+    // Accessors
     std::string getName() const;
     int getLevel() const;
     int getCombatStrength() const;
-    std::vector<Card> getInventory() const;
-    std::vector<Card> getEquippedItems() const;
-    std::string getClass() const;
-    std::string getRace() const;
+    const std::vector<std::unique_ptr<Card>> &getInventory() const;
+    const std::vector<std::unique_ptr<ItemCard>> &getEquippedItems() const;
+    std::string getClassName() const;
+    std::string getRaceName() const;
 
-    void equipItem(const Card& item);
-    void unequipItem(const Card& item);
-    void addItemToInventory(const Card& item);
-    void removeItemFromInventory(const Card& item);
+    // Inventory and Equipment Management
+    void equipItem(std::unique_ptr<ItemCard> item);
+    void unequipItem(std::unique_ptr<ItemCard> item);
+    void addItemToInventory(std::unique_ptr<Card> item);
+    void removeItemFromInventory(const Card &item);
 
+    // Level Management
     void levelUp();
     void levelDown();
 
+    // Combat Strength Calculation
+    void calculateCombatStrength();
+
+    // Display Player Status
     void displayStatus() const;
 };
 
 #endif
-

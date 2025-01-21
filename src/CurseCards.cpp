@@ -1,5 +1,7 @@
 #include "CurseCards.hpp"
+#include <iostream>
 
+// Returns a collection of predefined curse cards
 std::vector<CurseData> getCurseData()
 {
     return {
@@ -16,23 +18,30 @@ std::vector<CurseData> getCurseData()
         {"Lose Your Footgear", "You must discard your equipped Footgear item.", {{"LoseFootgear", 1}}}};
 }
 
+// Displays detailed information about a specific curse
 void displayCurseDetails(const CurseData &curseData)
 {
+    std::cout << "==================\n";
     std::cout << "Curse: " << curseData.name << "\n";
     std::cout << curseData.description << "\n";
+    std::cout << "Effects:\n";
     for (const auto &[key, value] : curseData.effects)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
-    std::cout << "\n";
+    std::cout << "==================\n\n";
 }
 
+// Displays detailed information about the curse card
 void CurseCard::displayCardInfo()
 {
+    std::cout << "==================\n";
     std::cout << "Curse Card: " << name << "\n";
     std::cout << description << "\n";
+    std::cout << "Effects:\n";
     for (const auto &[key, value] : effects)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
+    std::cout << "==================\n\n";
 }

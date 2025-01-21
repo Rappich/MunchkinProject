@@ -1,84 +1,56 @@
 #include "Deck.hpp"
+#include "MonsterCards.hpp"
+#include "RaceCards.hpp"
+#include "ItemCards.hpp"
+#include "CurseCards.hpp"
 
+// Constructor
 Deck::Deck(DeckType deckType)
 {
     this->deckType = deckType;
-    switch (this->deckType)
-    {
-    case DeckType::DoorDeck:
-
-        break;
-    }
+    PopulateDeck(deckType);
 }
 
+// Populate the deck with cards based on the deck type
 void Deck::PopulateDeck(DeckType deckType)
 {
-    std::vector<MonsterData> monsterData = getMonsterData();
     if (deckType == DeckType::DoorDeck)
     {
-        // Populate Door Deck
-        for(MonsterData data : monsterData)
+        // Add Monster Cards
+        std::vector<MonsterData> monsterData = getMonsterData();
+        for (const MonsterData &data : monsterData)
         {
-            cards.push_back(Card(data.name,data.type,data.level,data.badStuff));
+            cards.push_back(std::make_unique<MonsterCard>(data.name, data.level, data.badStuff));
         }
 
-        // cards.push_back(Card("Level 1 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key", "Item", 2));
-        // cards.push_back(Card("Level 2 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 2", "Item", 2));
-        // cards.push_back(Card("Level 3 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 3 ", "Item", 2));
-        // cards.push_back(Card("Level 4 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 4", "Item", 2));
-        // cards.push_back(Card("Level 5 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 5", "Item", 2));
-        // cards.push_back(Card("Level 1 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key", "Item", 2));
-        // cards.push_back(Card("Level 2 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 2", "Item", 2));
-        // cards.push_back(Card("Level 3 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 3 ", "Item", 2));
-        // cards.push_back(Card("Level 4 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 4", "Item", 2));
-        // cards.push_back(Card("Level 5 Skeleton", "Monster", 1));
-        // cards.push_back(Card("Curse! Lose 1 Level", "Curse", 0));
-        // cards.push_back(Card("Magic Key 5", "Item", 2));
-        shuffleDeck();
+        // Add Race Cards
+        std::vector<RaceData> raceData = getRaceData();
+        for (const RaceData &data : raceData)
+        {
+            cards.push_back(std::make_unique<RaceCard>(data.name, data.description, data.bonuses));
+        }
+
+        // Add Curse Cards
+        std::vector<CurseData> curseData = getCurseData();
+        for (const CurseData &data : curseData)
+        {
+            cards.push_back(std::make_unique<CurseCard>(data.name, data.description, data.effects));
+        }
     }
-    else
+    else if (deckType == DeckType::TreasureDeck)
     {
-        //Populate Treasure Deck
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        cards.push_back(Card("Boots of Butt-Kicking", "Item", 2));
-        cards.push_back(Card("Potion of Heroism", "Item", 5));
-        cards.push_back(Card("Bag of Gold", "Treasure", 100));
-        shuffleDeck();
+        // Add Item Cards
+        std::vector<ItemData> itemData = getItemData();
+        for (const ItemData &data : itemData)
+        {
+            cards.push_back(std::make_unique<ItemCard>(data.name, data.description, data.goldValue, data.bonuses));
+        }
     }
+
+    shuffleDeck();
 }
 
+// Shuffle the deck
 void Deck::shuffleDeck()
 {
     std::random_device rd;
@@ -86,14 +58,39 @@ void Deck::shuffleDeck()
     std::shuffle(cards.begin(), cards.end(), g);
 }
 
-Card Deck::drawCard()
+// Draw a card from the top of the deck
+std::unique_ptr<Card> Deck::drawCard()
 {
-    Card drawnCard = cards.back(); // Draw the top card
-    cards.pop_back();              // Remove it from the deck
+    if (cards.empty())
+    {
+        throw std::runtime_error("The deck is empty. Cannot draw a card.");
+    }
+
+    std::unique_ptr<Card> drawnCard = std::move(cards.back());
+    cards.pop_back();
     return drawnCard;
 }
 
+// Add a card to the deck
+void Deck::AddCard(std::unique_ptr<Card> card)
+{
+    cards.push_back(std::move(card));
+}
+
+// Set the deck type
 void Deck::SetdeckType(DeckType deckType)
 {
     this->deckType = deckType;
+}
+
+// Get the deck type
+DeckType Deck::GetdeckType() const
+{
+    return deckType;
+}
+
+// Get all cards in the deck
+const std::vector<std::unique_ptr<Card>> &Deck::GetCards() const
+{
+    return cards;
 }

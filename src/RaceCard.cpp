@@ -1,5 +1,7 @@
 #include "RaceCards.hpp"
+#include <iostream>
 
+// Returns a collection of predefined race data
 std::vector<RaceData> getRaceData()
 {
     return {
@@ -9,23 +11,30 @@ std::vector<RaceData> getRaceData()
         {"Human", "No special abilities but can use all items. Gain +1 to all rolls.", {{"GeneralRollBonus", 1}}}};
 }
 
+// Displays details of a specific race
 void displayRaceDetails(const RaceData &raceData)
 {
+    std::cout << "==================\n";
     std::cout << "Race: " << raceData.name << "\n";
     std::cout << raceData.description << "\n";
+    std::cout << "Bonuses:\n";
     for (const auto &[key, value] : raceData.bonuses)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
-    std::cout << "\n";
+    std::cout << "==================\n\n";
 }
 
+// Displays detailed information about the race card
 void RaceCard::displayCardInfo()
 {
+    std::cout << "==================\n";
     std::cout << "Race Card: " << name << "\n";
     std::cout << description << "\n";
+    std::cout << "Bonuses:\n";
     for (const auto &[key, value] : bonuses)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
+    std::cout << "==================\n\n";
 }

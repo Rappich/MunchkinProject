@@ -1,215 +1,152 @@
 #include "Game.hpp"
+#include <ctime>
+#include <cstdlib>
 
+// Constructor: Initializes the decks
 Game::Game()
 {
     doorDeck.SetdeckType(DeckType::DoorDeck);
     doorDeck.PopulateDeck(DeckType::DoorDeck);
     treasureDeck.SetdeckType(DeckType::TreasureDeck);
     treasureDeck.PopulateDeck(DeckType::TreasureDeck);
+
+    currentTurn = 0;
+    gameState = "Not Started";
 }
 
-void Game::playerTurn(Player &player)
-{
-    std::cout << "It's " << player.getName() << "'s turn!" << std::endl;
-
-    // Step 1: Action Phase - Ask if the player wants to do something with their hand (equip item, use potion, etc.)
-    bool actionTaken = false;
-    while (!actionTaken)
-    {
-        std::cout << "\nDo you want to take an action with your cards in hand? (y/n): ";
-        char actionChoice;
-        std::cin >> actionChoice;
-
-        if (actionChoice == 'y' || actionChoice == 'Y')
-        {
-            // Display player's cards in hand and prompt for action
-            std::cout << "\nYour current hand: " << std::endl;
-            std::vector<Card> hand = player.getInventory();
-            for (size_t i = 0; i < hand.size(); ++i)
-            {
-                std::cout << i + 1 << ". " << hand[i].name << " (" << hand[i].type << ")" << std::endl;
-            }
-
-            std::cout << "\nWhat would you like to do? (1-Equip, 2-Use Item, 3-Do Nothing): ";
-            int choice;
-            std::cin >> choice;
-
-            if (choice == 1)
-            {
-                // Equip an item
-                std::cout << "Enter the number of the item you want to equip: ";
-                int itemIndex;
-                std::cin >> itemIndex;
-                if (itemIndex > 0 && itemIndex <= hand.size())
-                {
-                    player.equipItem(hand[itemIndex - 1]); // Equip the selected item
-                }
-                else
-                {
-                    std::cout << "Invalid item number." << std::endl;
-                }
-            }
-            else if (choice == 2)
-            {
-                // Use an item (e.g., potion, etc.)
-                std::cout << "Enter the number of the item you want to use: ";
-                int itemIndex;
-                std::cin >> itemIndex;
-                if (itemIndex > 0 && itemIndex <= hand.size())
-                {
-                    // For simplicity, assume all items in the inventory are usable potions or consumables
-                    std::cout << "You used " << hand[itemIndex - 1].name << "!" << std::endl;
-                    player.removeItemFromInventory(hand[itemIndex - 1]); // Remove item after use
-                    //actionTaken = true;
-                }
-                else
-                {
-                    std::cout << "Invalid item number." << std::endl;
-                }
-            }
-            else if (choice == 3)
-            {
-                // Do nothing
-                std::cout << "You chose to do nothing and move on." << std::endl;
-                actionTaken = true;
-            }
-            else
-            {
-                std::cout << "Invalid choice. Please choose again." << std::endl;
-            }
-        }
-        else if (actionChoice == 'n' || actionChoice == 'N')
-        {
-            // Player decides not to take any action
-            std::cout << "You decided not to take any action this turn." << std::endl;
-            actionTaken = true;
-        }
-        else
-        {
-            std::cout << "Invalid choice. Please choose 'y' or 'n'." << std::endl;
-        }
-    }
-
-    // Step 2: Draw a door card
-    Card drawnDoorCard;
-    if (!doorDeck.cards.empty())
-    {
-         drawnDoorCard = doorDeck.drawCard(); // Assume drawDoorCard is defined elsewhere
-        std::cout << "You drew a door card: " << drawnDoorCard.name << std::endl;
-
-        // Step 3: Handle the drawn Door card (Monster, Curse, Class/Race, or other)
-        if (drawnDoorCard.type == "Monster")
-        {
-            // Handle combat with the drawn monster
-            std::cout << "A monster has appeared! Prepare for combat!" << std::endl;
-            combat(player, drawnDoorCard); // Assume combat function is defined elsewhere
-        }
-        else if (drawnDoorCard.type == "Curse")
-        {
-            // Apply the curse
-            //applyCurse(player, drawnDoorCard); // Assume applyCurse function is defined elsewhere
-        }
-        else if (drawnDoorCard.type == "Class" || drawnDoorCard.type == "Race")
-        {
-            // Ask if the player wants to apply class or race change
-            std::cout << "You are now a " << drawnDoorCard.name << "!" << std::endl; // CHANGEEEE
-            if (drawnDoorCard.type == "Class")
-            {
-                player.addItemToInventory(drawnDoorCard); // Treat classes as items to be added
-            }
-            else
-            {
-                player.addItemToInventory(drawnDoorCard); // Treat races as items to be added
-            }
-        }
-        else
-        {
-            // Handle other card types (e.g., Action cards, etc.)
-            std::cout << "Card action not recognized: " << drawnDoorCard.name << std::endl;
-        }
-    }
-
-   
-   
-    // Step 5: End of turn
-    std::cout << player.getName() << "'s turn has ended." << std::endl;
-}
-
+// Start the game and distribute initial cards
 void Game::startGame()
 {
-    // Game starts with player drawing 4 cards
+    std::cout << "Starting the game...\n";
+
+    // Distribute 4 cards to each player from both decks
     for (Player &player : GetPlayerList())
     {
-        if (!doorDeck.cards.empty())
+        for (int i = 0; i < 4; ++i)
         {
-            for (int i = 0; i < 4; i++)
-            {
+            if (!doorDeck.GetCards().empty())
                 player.addItemToInventory(doorDeck.drawCard());
-            }
-        }
-        else
-        {
-            // implement logic to draw from discard pile after shuffling
-        }
-        if (!treasureDeck.cards.empty())
-        {
-            for (int i = 0; i < 4; i++)
-            {
+            else
+                std::cout << "Door deck is empty. Cannot draw more cards.\n";
+
+            if (!treasureDeck.GetCards().empty())
                 player.addItemToInventory(treasureDeck.drawCard());
-            }
-        }
-        else
-        {
-            // implement logic to draw from discard pile after shuffling
+            else
+                std::cout << "Treasure deck is empty. Cannot draw more cards.\n";
         }
         player.displayStatus();
     }
+
+    gameState = "In Progress";
 }
 
-bool Game::checkVictory(std::vector<Player>& players)
+// Handle a player's turn
+void Game::playerTurn(Player &player)
 {
-    for (Player &player : players)
-         {
-             if(player.getLevel() >= 10)
-             {
-                std::cout << "Player " << player.getName() << " wins the game!";
-                return true;
-             }
-         }
+    std::cout << "\nIt's " << player.getName() << "'s turn!\n";
+
+    // Step 1: Draw a door card
+    if (doorDeck.GetCards().empty())
+    {
+        std::cout << "Door deck is empty. Shuffling discard pile...\n";
+        // Logic to shuffle discard pile into the main deck
+    }
+
+    std::unique_ptr<Card> drawnCard = doorDeck.drawCard();
+    drawnCard->displayCardInfo();
+
+    // Step 2: Handle the card type
+    if (auto monsterCard = dynamic_cast<MonsterCard *>(drawnCard.get()))
+    {
+        combat(player, *monsterCard);
+    }
+    else if (auto curseCard = dynamic_cast<CurseCard *>(drawnCard.get()))
+    {
+        curseCard->applyCurse(player);
+    }
+    else if (auto classCard = dynamic_cast<ClassCard *>(drawnCard.get()))
+    {
+        player.setClass(*classCard); // Assuming setClass() is implemented
+    }
+    else if (auto raceCard = dynamic_cast<RaceCard *>(drawnCard.get()))
+    {
+        player.setRace(*raceCard); // Assuming setRace() is implemented
+    }
+    else
+    {
+        std::cout << "You found a special card. Adding it to your inventory.\n";
+        player.addItemToInventory(*drawnCard);
+    }
+
+    // Step 3: End of turn
+    endTurn();
+}
+
+// Combat with a monster
+void Game::combat(Player &player, MonsterCard &monsterCard)
+{
+    std::cout << "Combat with " << monsterCard.getName() << " initiated!\n";
+
+    int playerStrength = player.calculateCombatStrength();
+    int monsterStrength = monsterCard.getLevel();
+
+    std::cout << "Player strength: " << playerStrength << "\n";
+    std::cout << "Monster strength: " << monsterStrength << "\n";
+
+    if (playerStrength >= monsterStrength)
+    {
+        std::cout << "Victory! " << player.getName() << " defeated the monster.\n";
+        player.levelUp();
+        if (!treasureDeck.GetCards().empty())
+        {
+            auto treasure = treasureDeck.drawCard();
+            player.addItemToInventory(*treasure);
+            std::cout << "You earned a treasure: " << treasure->getName() << "\n";
+        }
+    }
+    else
+    {
+        std::cout << "Defeat! You must flee or suffer the consequences.\n";
+        int fleeRoll = rand() % 6 + 1;
+        std::cout << player.getName() << " rolled a " << fleeRoll << " to flee.\n";
+
+        if (fleeRoll < 5)
+        {
+            std::cout << "Failed to flee. Applying bad stuff.\n";
+            monsterCard.applyBadStuff(player);
+        }
+        else
+        {
+            std::cout << "Successfully fled the battle.\n";
+        }
+    }
+}
+
+// End the current turn
+void Game::endTurn()
+{
+    currentTurn = (currentTurn + 1) % players.size();
+    std::cout << "Turn ended. Next player: " << players[currentTurn].getName() << "\n";
+}
+
+// Check victory condition
+bool Game::checkVictory(std::vector<Player> &players)
+{
+    for (const Player &player : players)
+    {
+        if (player.getLevel() >= 10)
+        {
+            std::cout << player.getName() << " has reached level 10 and won the game!\n";
+            gameState = "Completed";
+            return true;
+        }
+    }
     return false;
 }
+
+// Add a new player
 void Game::AddPlayer(Player newPlayer)
 {
-    players.push_back(newPlayer);
-}
-
-void Game::combat(Player &player, Card &drawnDoorCard)
-{
-   if (player.getCombatStrength() > drawnDoorCard.value)
-   {
-    std::cout << "You defeted the monster!" << std::endl;
-    player.levelUp();
-    player.addItemToInventory(treasureDeck.drawCard());
-
-   }
-   else if (player.getCombatStrength() <= drawnDoorCard.value)
-   {
-     
-    std::cout << "Your level suck" << std::endl;
-    srand(time(0));
-    int fleeRoll = rand() % 6 + 1;
-    std::cout << player.getName() << " tries to flee... Rolled: " << fleeRoll << "\n";
-    if (fleeRoll <= 5)
-    {
-        std::cout << "The monster defeted you!" << std::endl;
-        applyBadStuff(player, drawnDoorCard.badStuff);
-    } 
-    else 
-    {
-        std::cout << "You escaped!" << std::endl;
-    }
-   }
-
-
-
+    players.push_back(std::move(newPlayer));
+    std::cout << "Player " << newPlayer.getName() << " has joined the game.\n";
 }

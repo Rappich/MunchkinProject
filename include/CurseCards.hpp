@@ -1,37 +1,40 @@
-// CurseCard.hpp
 #ifndef CURSECARDS_HPP
 #define CURSECARDS_HPP
 
 #include "Card.hpp"
 #include <vector>
 #include <map>
+#include <string>
 
+// Struct to store predefined curse data
 struct CurseData
 {
-    std::string name;
-    std::string description;
+    std::string name;                   // Name of the curse
+    std::string description;            // Description of the curse
     std::map<std::string, int> effects; // Effects applied by the curse
 };
 
+// CurseCard class inheriting from Card
 class CurseCard : public Card
 {
 public:
-    CurseCard(const std::string &name, const std::string &description, const std::map<std::string, int> &effects)
-        : Card(name, "Curse", 0), description(description), effects(effects) {}
+    // Constructors
+    CurseCard(); // Default constructor
+    CurseCard(const std::string &name, const std::string &description, const std::map<std::string, int> &effects);
 
     // Accessor methods
-    std::string getDescription() const { return description; }
-    std::map<std::string, int> getEffects() const { return effects; }
+    std::string getDescription() const;            // Returns the description of the curse
+    std::map<std::string, int> getEffects() const; // Returns the effects of the curse
 
-    // Display method
+    // Display card information
     void displayCardInfo() override;
 
 private:
-    std::string description;
-    std::map<std::string, int> effects;
+    std::string description;            // Description of the curse
+    std::map<std::string, int> effects; // Effects applied by the curse
 };
 
-// Function prototypes for Curse data
+// Utility functions for managing predefined curse data
 std::vector<CurseData> getCurseData();
 void displayCurseDetails(const CurseData &curseData);
 

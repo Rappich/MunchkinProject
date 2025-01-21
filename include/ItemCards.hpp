@@ -4,39 +4,44 @@
 #include "Card.hpp"
 #include <string>
 #include <map>
+#include <vector>
+
+// Struct to store predefined item data
 struct ItemData
-
 {
-    std::string name;
-    std::string description;
-    int goldValue;
-    std::map<std::string, int> bonuses;
+    std::string name;                   // Name of the item
+    std::string description;            // Description of the item
+    int goldValue;                      // Monetary value of the item
+    std::map<std::string, int> bonuses; // Bonuses provided by the item
 
+    // Constructor for ItemData
     ItemData(const std::string &name, const std::string &description, int goldValue, const std::map<std::string, int> &bonuses)
-
-        : name(name), description(description), goldValue(goldValue), bonuses(bonuses)
-    {
-    }
+        : name(name), description(description), goldValue(goldValue), bonuses(bonuses) {}
 };
 
+// ItemCard class inheriting from Card
 class ItemCard : public Card
 {
 public:
-    ItemCard(const std::string &name, const std::string &description, int goldValue, const std::map<std::string, int> &bonuses)
-        : Card(name, "Item", goldValue), description(description), bonuses(bonuses) {}
+    // Constructors
+    ItemCard(); // Default constructor
+    ItemCard(const std::string &name, const std::string &description, int goldValue, const std::map<std::string, int> &bonuses);
 
-    std::string getDescription() const { return description; }
-    int getGoldValue() const { return goldValue; }
-    std::map<std::string, int> getBonuses() const { return bonuses; }
+    // Accessor methods
+    std::string getDescription() const;
+    int getGoldValue() const;
+    std::map<std::string, int> getBonuses() const;
 
+    // Display card information
     void displayCardInfo() override;
 
 private:
-    std::string description;
-    int goldValue;
-    std::map<std::string, int> bonuses;
+    std::string description;            // Description of the item
+    int goldValue;                      // Monetary value of the item
+    std::map<std::string, int> bonuses; // Bonuses provided by the item
 };
 
+// Utility functions for managing predefined item data
 std::vector<ItemData> getItemData();
 void displayItemDetails(const ItemData &itemData);
 

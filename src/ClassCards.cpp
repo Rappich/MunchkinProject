@@ -1,7 +1,11 @@
-#include "ClassCard.hpp"
+#include "ClassCards.hpp"
 #include <iostream>
 
-// Constructor
+// Default constructor
+ClassCard::ClassCard()
+    : Card("Unnamed Class", "Class", 0), description("No description"), bonuses({}) {}
+
+// Parameterized constructor
 ClassCard::ClassCard(const std::string &name, const std::string &description, const std::map<std::string, int> &bonuses)
     : Card(name, "Class", 0), description(description), bonuses(bonuses) {}
 
@@ -9,7 +13,7 @@ ClassCard::ClassCard(const std::string &name, const std::string &description, co
 std::string ClassCard::getDescription() const { return description; }
 std::map<std::string, int> ClassCard::getBonuses() const { return bonuses; }
 
-// Display method
+// Display class card details
 void ClassCard::displayCardInfo()
 {
     std::cout << "Class Card: " << name << "\n";
@@ -18,9 +22,10 @@ void ClassCard::displayCardInfo()
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
+    std::cout << "\n";
 }
 
-// Function to get class data
+// Predefined class data
 std::vector<ClassData> getClassData()
 {
     return {
@@ -30,7 +35,7 @@ std::vector<ClassData> getClassData()
         {"Cleric", "Gain +2 against undead monsters. Can discard cards to heal.", {{"UndeadBonus", 2}, {"HealBonus", 1}}}};
 }
 
-// Function to display class details
+// Display details of a specific class
 void displayClassDetails(const ClassData &classData)
 {
     std::cout << "Class: " << classData.name << "\n";
