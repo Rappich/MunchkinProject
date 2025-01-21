@@ -19,7 +19,7 @@ public:
         : name(n), type(t), value(v), badStuff(bs) {}
 
     virtual void displayCardInfo();
-    // Equality operator
+
     bool operator==(const Card &other) const
     {
         return name == other.name && type == other.type && value == other.value;
