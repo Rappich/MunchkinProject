@@ -2,32 +2,30 @@
 #include <string>
 
 // Default constructor
-Card::Card()
-    : name("Unnamed Card"), type("Undefined"), value(0), badStuff({})
+Card::Card() : name(""), type(""), value(0), badStuff({}) {}
+
+// Parameterized constructor
+Card::Card(std::string n, std::string t, int v, std::map<std::string, int> bs)
+    : name(n), type(t), value(v), badStuff(bs) {}
+
+// Method to get the card name
+std::string Card::getCardName() const
 {
-    // Default initialization for a generic card
+    return name;
 }
 
 // Virtual method for displaying card information
 void Card::displayCardInfo()
 {
-    std::cout << "Card Info:\n";
-    std::cout << "Name: " << name << "\n";
-    std::cout << "Type: " << type << "\n";
-    std::cout << "Value: " << value << "\n";
-
-    // Display badStuff only if it's relevant (usually for MonsterCard)
+    std::cout << "Card Name: " << name << "\n";
+    std::cout << "Card Type: " << type << "\n";
+    std::cout << "Card Value: " << value << "\n";
     if (!badStuff.empty())
     {
         std::cout << "Bad Stuff:\n";
-        for (const auto &effect : badStuff)
+        for (const auto &pair : badStuff)
         {
-            std::cout << "- " << effect.first << ": " << effect.second << "\n";
+            std::cout << " - " << pair.first << ": " << pair.second << "\n";
         }
     }
-    else
-    {
-        std::cout << "No specific penalties associated with this card.\n";
-    }
-    std::cout << "\n";
 }

@@ -25,16 +25,16 @@ void displayRaceDetails(const RaceData &raceData)
     std::cout << "==================\n\n";
 }
 
+RaceCard::RaceCard(const std::string &name, const std::string &description, const std::map<std::string, int> &bonuses)
+    : Card(name, "Race", 0), description(description), bonuses(bonuses) {}
+
 // Displays detailed information about the race card
 void RaceCard::displayCardInfo()
 {
-    std::cout << "==================\n";
-    std::cout << "Race Card: " << name << "\n";
+    std::cout << "Race Card: " << getCardName() << "\n";
     std::cout << description << "\n";
-    std::cout << "Bonuses:\n";
     for (const auto &[key, value] : bonuses)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
-    std::cout << "==================\n\n";
 }

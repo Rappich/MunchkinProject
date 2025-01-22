@@ -19,19 +19,14 @@ class CurseCard : public Card
 {
 public:
     // Constructors
-    CurseCard(); // Default constructor
-    CurseCard(const std::string &name, const std::string &description, const std::map<std::string, int> &effects);
-
-    // Accessor methods
-    std::string getDescription() const;            // Returns the description of the curse
-    std::map<std::string, int> getEffects() const; // Returns the effects of the curse
+    CurseCard(const std::string &name, const std::string &description, const std::map<std::string, int> &badStuff);
 
     // Display card information
     void displayCardInfo() override;
 
 private:
-    std::string description;            // Description of the curse
-    std::map<std::string, int> effects; // Effects applied by the curse
+    std::string description;             // Description of the curse
+    std::map<std::string, int> badStuff; // Effects applied by the curse
 };
 
 // Utility functions for managing predefined curse data

@@ -1,5 +1,5 @@
-#ifndef MONSTER_CARDS_HPP
-#define MONSTER_CARDS_HPP
+#ifndef MONSTERCARD_HPP
+#define MONSTERCARD_HPP
 
 #include "Card.hpp"
 #include "Player.hpp"
@@ -27,13 +27,12 @@ public:
 
     // Accessor methods
     int getLevel() const;
-    std::map<std::string, int> getBadStuff() const;
 
     // Display monster card details
     void displayCardInfo() override;
 
     // Apply penalties to the player
-    void applyBadStuff(Player &player);
+    void applyBadStuff(Player &player) const;
 
 private:
     int level;                           // Monster strength level
@@ -44,4 +43,4 @@ private:
 std::vector<MonsterData> getMonsterData();
 void displayMonsterDetails(const MonsterData &monster);
 
-#endif
+#endif // MONSTERCARD_HPP

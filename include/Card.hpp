@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <string>
+
 class Card
 {
 public:
@@ -26,8 +27,11 @@ public:
         return name == other.name && type == other.type && value == other.value;
     }
 
+    // Method to get the card name
+    std::string getCardName() const;
+
     // Virtual destructor for proper cleanup in derived classes
-    virtual ~Card() {}
+    virtual ~Card() = default;
 };
 
 #endif

@@ -1,6 +1,22 @@
 #include "ItemCards.hpp"
 #include <iostream>
 
+// Default constructor
+ItemCard::ItemCard() : Card(), description(""), goldValue(0), bonuses({}) {}
+
+// Parameterized constructor
+ItemCard::ItemCard(const std::string &name, const std::string &description, int goldValue, const std::map<std::string, int> &bonuses)
+    : Card(name, "Item", goldValue), description(description), goldValue(goldValue), bonuses(bonuses) {}
+
+// Accessor methods
+std::string ItemCard::getDescription() const { return description; }
+int ItemCard::getGoldValue() const { return goldValue; }
+std::map<std::string, int> ItemCard::getBonuses() const { return bonuses; }
+
+std::string ItemCard::getName() const
+{
+    return getCardName();
+}
 // Returns a collection of predefined item data
 std::vector<ItemData> getItemData()
 {
@@ -37,13 +53,24 @@ void displayItemDetails(const ItemData &itemData)
     std::cout << "==================\n\n";
 }
 
+// Implement getCombatStrengthValue method
+int ItemCard::getCombatStrengthValue() const
+{
+    auto it = bonuses.find("CombatBonus");
+    if (it != bonuses.end())
+    {
+        return it->second;
+    }
+    return 0;
+}
+
 // Displays detailed information about the item card
 void ItemCard::displayCardInfo()
 {
     std::cout << "==================\n";
-    std::cout << "Item Card: " << name << "\n";
+    std::cout << "Item Card: " << getCardName() << "\n";
     std::cout << description << "\n";
-    std::cout << "Value: " << value << " gold pieces\n";
+    std::cout << "Value: " << goldValue << " gold pieces\n";
     std::cout << "Bonuses:\n";
     for (const auto &[key, value] : bonuses)
     {

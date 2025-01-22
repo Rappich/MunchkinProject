@@ -5,6 +5,7 @@
 #include "CurseCards.hpp"
 
 // Constructor
+Deck::Deck() {}
 Deck::Deck(DeckType deckType)
 {
     this->deckType = deckType;

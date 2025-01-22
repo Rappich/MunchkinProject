@@ -1,7 +1,7 @@
-
 #include "MonsterCards.hpp"
-#include <cstdlib>
-#include <ctime>
+#include "Player.hpp"
+#include <iostream>
+#include <random>
 
 // Returns a collection of predefined monster data
 std::vector<MonsterData> getMonsterData()
@@ -69,6 +69,9 @@ MonsterCard initializeMonster(const MonsterData &monster)
 // Applies penalties to the player based on bad stuff
 void applyBadStuff(Player &player, const std::map<std::string, int> &badStuff)
 {
+    std::random_device rd;
+    std::mt19937 gen(rd());
+
     for (const auto &[effect, value] : badStuff)
     {
         if (effect == "LoseLevels")
@@ -83,12 +86,16 @@ void applyBadStuff(Player &player, const std::map<std::string, int> &badStuff)
             auto equippedItems = player.getEquippedItems();
             if (!equippedItems.empty())
             {
-                srand(static_cast<unsigned>(time(0)));
-                int randomIndex = rand() % equippedItems.size();
-                Card itemLost = equippedItems[randomIndex];
-                player.unequipItem(itemLost);
-                player.removeItemFromInventory(itemLost);
-                std::cout << player.getName() << " lost a random item: " << itemLost.name << ".\n";
+                std::uniform_int_distribution<> dis(0, equippedItems.size() - 1);
+                int randomIndex = dis(gen);
+
+                // Transfer ownership of the item and erase from equippedItems
+                std::shared_ptr<ItemCard> itemLost = std::move(equippedItems[randomIndex]);
+                equippedItems.erase(equippedItems.begin() + randomIndex);
+
+                // Remove item from player's inventory
+                player.removeItemFromInventory(*itemLost); // Pass by reference
+                std::cout << player.getName() << " lost a random item: " << itemLost->getCardName() << ".\n";
             }
             else
             {
@@ -108,5 +115,67 @@ void applyBadStuff(Player &player, const std::map<std::string, int> &badStuff)
         {
             std::cout << "Unhandled bad stuff: " << effect << "\n";
         }
+    }
+}
+
+MonsterCard::MonsterCard(const std::string &name, int level, const std::map<std::string, int> &badStuff)
+    : Card(name, "Monster", level), level(level), badStuff(badStuff) {}
+
+int MonsterCard::getLevel() const
+{
+    return level;
+}
+
+void MonsterCard::applyBadStuff(Player &player) const
+{
+    for (const auto &[effect, value] : badStuff)
+    {
+        if (effect == "LoseLevels")
+        {
+            for (int i = 0; i < value; ++i)
+            {
+                player.levelDown();
+            }
+        }
+        else if (effect == "LoseItem")
+        {
+            auto equippedItems = player.getEquippedItems();
+            if (!equippedItems.empty())
+            {
+                srand(static_cast<unsigned>(time(0)));
+                int randomIndex = rand() % equippedItems.size();
+                std::shared_ptr<ItemCard> itemLost = std::move(equippedItems[randomIndex]);
+                equippedItems.erase(equippedItems.begin() + randomIndex);
+                player.removeItemFromInventory(*itemLost);
+                std::cout << player.getName() << " lost a random item: " << itemLost->getCardName() << ".\n";
+            }
+            else
+            {
+                std::cout << player.getName() << " has no items to lose!\n";
+            }
+        }
+        else if (effect == "DiscardHand")
+        {
+            player.getInventory().clear();
+            std::cout << player.getName() << " discarded their entire hand.\n";
+        }
+        else if (effect == "Death")
+        {
+            std::cout << player.getName() << " dies. Game over for them!\n";
+        }
+        else
+        {
+            std::cout << "Unhandled bad stuff: " << effect << "\n";
+        }
+    }
+}
+
+void MonsterCard::displayCardInfo()
+{
+    std::cout << "Monster Card: " << getCardName() << "\n";
+    std::cout << "Level: " << level << "\n";
+    for (const auto &[key, value] : badStuff)
+    {
+        std::cout << " - " << key << ": " << value << "\n";
     }
 }

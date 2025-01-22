@@ -1,6 +1,7 @@
 #include "Game.hpp"
 #include <ctime>
 #include <cstdlib>
+#include <iostream>
 
 // Constructor: Initializes the decks
 Game::Game()
@@ -12,6 +13,11 @@ Game::Game()
 
     currentTurn = 0;
     gameState = "Not Started";
+}
+
+std::vector<Player> &Game::GetPlayerList()
+{
+    return players;
 }
 
 // Start the game and distribute initial cards
@@ -62,20 +68,20 @@ void Game::playerTurn(Player &player)
     }
     else if (auto curseCard = dynamic_cast<CurseCard *>(drawnCard.get()))
     {
-        curseCard->applyCurse(player);
+        player.applyCurse(*curseCard);
     }
     else if (auto classCard = dynamic_cast<ClassCard *>(drawnCard.get()))
     {
-        player.setClass(*classCard); // Assuming setClass() is implemented
+        player.setPlayerClass(*classCard); // Assuming setPlayerClass() is implemented
     }
     else if (auto raceCard = dynamic_cast<RaceCard *>(drawnCard.get()))
     {
-        player.setRace(*raceCard); // Assuming setRace() is implemented
+        player.setPlayerRace(*raceCard); // Assuming setPlayerRace() is implemented
     }
     else
     {
         std::cout << "You found a special card. Adding it to your inventory.\n";
-        player.addItemToInventory(*drawnCard);
+        player.addItemToInventory(std::move(drawnCard));
     }
 
     // Step 3: End of turn
@@ -85,9 +91,9 @@ void Game::playerTurn(Player &player)
 // Combat with a monster
 void Game::combat(Player &player, MonsterCard &monsterCard)
 {
-    std::cout << "Combat with " << monsterCard.getName() << " initiated!\n";
+    std::cout << "Combat with " << monsterCard.getCardName() << " initiated!\n";
 
-    int playerStrength = player.calculateCombatStrength();
+    int playerStrength = player.calculateCombatStrengthValue();
     int monsterStrength = monsterCard.getLevel();
 
     std::cout << "Player strength: " << playerStrength << "\n";
@@ -100,8 +106,8 @@ void Game::combat(Player &player, MonsterCard &monsterCard)
         if (!treasureDeck.GetCards().empty())
         {
             auto treasure = treasureDeck.drawCard();
-            player.addItemToInventory(*treasure);
-            std::cout << "You earned a treasure: " << treasure->getName() << "\n";
+            player.addItemToInventory(std::move(treasure));
+            std::cout << "You earned a treasure: " << treasure->getCardName() << "\n";
         }
     }
     else

@@ -1,91 +1,65 @@
 #include "Player.hpp"
+#include "ItemCards.hpp"
+#include <algorithm>
+#include <iostream>
 
-// Constructor to initialize player attributes
-Player::Player(std::string playerName)
-    : name(playerName), level(1), combatStrength(1), characterClass(nullptr), race(nullptr) {}
+Player::Player(const std::string &name) : name(name), level(1), combatStrength(0) {}
 
 // Getter methods
 std::string Player::getName() const { return name; }
 int Player::getLevel() const { return level; }
 int Player::getCombatStrength() const { return combatStrength; }
 
-const std::vector<std::unique_ptr<Card>> &Player::getInventory() const { return inventory; }
-const std::vector<std::unique_ptr<ItemCard>> &Player::getEquippedItems() const { return equippedItems; }
+std::vector<std::shared_ptr<Card>> &Player::getInventory() { return inventory; }
+const std::vector<std::shared_ptr<ItemCard>> &Player::getEquippedItems() const
+{
+    return equippedItems;
+}
 
-std::string Player::getClassName() const { return characterClass ? characterClass->getName() : "None"; }
-std::string Player::getRaceName() const { return race ? race->getName() : "None"; }
+std::string Player::getClassName() const { return characterClass ? characterClass->getCardName() : "No Class"; }
+std::string Player::getRaceName() const { return race ? race->getCardName() : "No Race"; }
 
 // Equip an item (move from inventory to equipped)
-void Player::equipItem(std::unique_ptr<ItemCard> item)
+void Player::equipItem(std::shared_ptr<ItemCard> item)
 {
-    auto it = std::find_if(inventory.begin(), inventory.end(),
-                           [&item](const std::unique_ptr<Card> &invItem)
-                           { return invItem.get() == item.get(); });
-
-    if (it != inventory.end())
-    {
-        equippedItems.push_back(std::move(item));
-        inventory.erase(it); // Remove from inventory
-        calculateCombatStrength();
-        std::cout << item->getName() << " has been equipped.\n";
-    }
-    else
-    {
-        std::cout << "Item not found in inventory.\n";
-    }
+    equippedItems.push_back(std::move(item));
 }
 
 // Unequip an item (move from equipped to inventory)
-void Player::unequipItem(std::unique_ptr<ItemCard> item)
+void Player::unequipItem(std::shared_ptr<ItemCard> item)
 {
     auto it = std::find_if(equippedItems.begin(), equippedItems.end(),
-                           [&item](const std::unique_ptr<ItemCard> &equippedItem)
-                           { return equippedItem.get() == item.get(); });
-
+                           [&item](const std::shared_ptr<ItemCard> &i)
+                           { return i->getCardName() == item->getCardName(); });
     if (it != equippedItems.end())
     {
-        inventory.push_back(std::move(*it)); // Return the item to inventory
-        equippedItems.erase(it);             // Remove from equipped items
-        calculateCombatStrength();
-        std::cout << item->getName() << " has been unequipped.\n";
-    }
-    else
-    {
-        std::cout << "Item not found in equipped items.\n";
+        equippedItems.erase(it);
     }
 }
 
 // Add an item to inventory
-void Player::addItemToInventory(std::unique_ptr<Card> item)
+void Player::addItemToInventory(std::shared_ptr<Card> item)
 {
     inventory.push_back(std::move(item));
-    std::cout << item->getName() << " added to inventory.\n";
 }
 
 // Remove an item from inventory
 void Player::removeItemFromInventory(const Card &item)
 {
     auto it = std::find_if(inventory.begin(), inventory.end(),
-                           [&item](const std::unique_ptr<Card> &invItem)
-                           { return *invItem == item; });
-
+                           [&item](const std::shared_ptr<Card> &i)
+                           { return i->getCardName() == item.getCardName(); });
     if (it != inventory.end())
     {
         inventory.erase(it);
-        std::cout << item.getName() << " removed from inventory.\n";
-    }
-    else
-    {
-        std::cout << "Item not found in inventory.\n";
     }
 }
 
 // Level up (increase level and recalculate combat strength)
 void Player::levelUp()
 {
-    level++;
+    ++level;
     calculateCombatStrength();
-    std::cout << name << " leveled up to Level " << level << "!\n";
 }
 
 // Level down (decrease level and recalculate combat strength)
@@ -93,13 +67,8 @@ void Player::levelDown()
 {
     if (level > 1)
     {
-        level--;
+        --level;
         calculateCombatStrength();
-        std::cout << name << " lost a level! Now at Level " << level << "!\n";
-    }
-    else
-    {
-        std::cout << name << " cannot level down below Level 1.\n";
     }
 }
 
@@ -111,27 +80,7 @@ void Player::calculateCombatStrength()
     // Add bonuses from equipped items
     for (const auto &item : equippedItems)
     {
-        for (const auto &[bonus, value] : item->getBonuses())
-        {
-            combatStrength += value;
-        }
-    }
-
-    // Add bonuses from class and race
-    if (characterClass)
-    {
-        for (const auto &[bonus, value] : characterClass->getBonuses())
-        {
-            combatStrength += value;
-        }
-    }
-
-    if (race)
-    {
-        for (const auto &[bonus, value] : race->getBonuses())
-        {
-            combatStrength += value;
-        }
+        combatStrength += item->getCombatStrengthValue();
     }
 }
 
@@ -145,9 +94,9 @@ void Player::displayStatus() const
     std::cout << "Race: " << getRaceName() << "\n";
 
     std::cout << "Inventory:\n";
-    for (const auto &item : inventory)
+    for (const auto &card : inventory)
     {
-        std::cout << " - " << item->getName() << "\n";
+        card->displayCardInfo();
     }
 
     std::cout << "Equipped Items:\n";
@@ -155,4 +104,36 @@ void Player::displayStatus() const
     {
         std::cout << " - " << item->getName() << "\n";
     }
+}
+
+void Player::applyCurse(const CurseCard &curseCard)
+{
+    std::cout << "Applying curse: " << curseCard.getCardName() << " to player " << getName() << "\n";
+    level = std::max(1, level - 1); // Example: reduce player's level
+}
+
+void Player::setPlayerClass(const ClassCard &classCard)
+{
+    characterClass = std::make_unique<ClassCard>(classCard);
+    std::cout << "Player " << getName() << " is now a " << characterClass->getCardName() << "\n";
+}
+
+void Player::setPlayerRace(const RaceCard &raceCard)
+{
+    race = std::make_unique<RaceCard>(raceCard);
+    std::cout << "Player " << getName() << " is now a " << race->getCardName() << "\n";
+}
+
+int Player::calculateCombatStrengthValue() const
+{
+    int combatStrength = level;
+    for (const auto &card : inventory)
+    {
+        // Assuming each card has a method to get its combat strength value
+        if (auto itemCard = dynamic_cast<ItemCard *>(card.get()))
+        {
+            combatStrength += itemCard->getCombatStrengthValue();
+        }
+    }
+    return combatStrength;
 }

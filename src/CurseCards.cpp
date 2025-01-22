@@ -1,6 +1,9 @@
 #include "CurseCards.hpp"
 #include <iostream>
 
+CurseCard::CurseCard(const std::string &name, const std::string &description, const std::map<std::string, int> &badStuff)
+    : Card(name, "Curse", 0), description(description), badStuff(badStuff) {}
+
 // Returns a collection of predefined curse cards
 std::vector<CurseData> getCurseData()
 {
@@ -35,13 +38,10 @@ void displayCurseDetails(const CurseData &curseData)
 // Displays detailed information about the curse card
 void CurseCard::displayCardInfo()
 {
-    std::cout << "==================\n";
-    std::cout << "Curse Card: " << name << "\n";
+    std::cout << "Curse Card: " << getCardName() << "\n";
     std::cout << description << "\n";
-    std::cout << "Effects:\n";
-    for (const auto &[key, value] : effects)
+    for (const auto &[key, value] : badStuff)
     {
         std::cout << " - " << key << ": " << value << "\n";
     }
-    std::cout << "==================\n\n";
 }

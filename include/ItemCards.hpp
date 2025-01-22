@@ -1,5 +1,5 @@
-#ifndef ITEMCARD_HPP
-#define ITEMCARD_HPP
+#ifndef ITEMCARDS_HPP
+#define ITEMCARDS_HPP
 
 #include "Card.hpp"
 #include <string>
@@ -32,8 +32,11 @@ public:
     int getGoldValue() const;
     std::map<std::string, int> getBonuses() const;
 
+    std::string getName() const;
+
     // Display card information
     void displayCardInfo() override;
+    int getCombatStrengthValue() const;
 
 private:
     std::string description;            // Description of the item

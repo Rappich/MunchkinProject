@@ -1,11 +1,9 @@
 @echo off
-REM Configure the project
-cmake -B build -S .
-REM Build the project using MSBuild
-cmake --build . --config Debug
+rem Configure the project
+cmake -S . -B build
 
-rem Copy the executable to the workspace directory
-copy build\Debug\Munchkin.exe Munchkin.exe
+rem Build the project
+cmake --build build --config Debug
 
-rem Run the executable from the workspace directory
-Munchkin.exe
+rem Change to the build directory
+cd build
