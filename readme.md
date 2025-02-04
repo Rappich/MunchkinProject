@@ -17,9 +17,8 @@ This project is a digital recreation of the popular Munchkin card game. The curr
    - Manage inventory and equipped items.
    - Level up or down based on gameplay.
 4. **Turn-Based Gameplay**:
-   - Seamlessly manage player turns and phases.
 5. **Multiplayer Support**:
-   - Play with 2–6 players in a competitive mode.
+   - Play with 2–6 players in a local competitive mode.
 
 ---
 
