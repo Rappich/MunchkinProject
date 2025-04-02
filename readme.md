@@ -1,4 +1,4 @@
-# Munchkin Card Game
+# Munchkin Card Game - WORK IN PROGRESS
 
 ## Project Overview
 This project is a digital recreation of the popular Munchkin card game. The current version is terminal-based, supporting core gameplay mechanics, with plans for future expansions including a GUI and database integration.
