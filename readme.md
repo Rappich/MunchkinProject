@@ -1,14 +1,14 @@
 # Munchkin Card Game (Unreal Engine Project) - WORK IN PROGRESS
 
 ## Project Overview
-This project aims to create a digital adaptation of the popular Munchkin card game using **Unreal Engine**. It leverages an earlier C++ console-based prototype as a starting point, which will be **refactored and integrated** into the Unreal Engine environment. The ultimate goal is a fully playable Munchkin experience within a modern game engine.
+This project aims to create a digital adaptation of the popular Munchkin card game using **Unreal Engine**. It leverages an earlier C++ console-based prototype from one of my school project as a starting point, which will be **refactored and integrated** into SFML environment. The ultimate goal is a fully playable Munchkin experience within a GUI.
 
 *(The original C++ console project, while unfinished, served as an initial exploration of the core game logic.)*
 
 ---
 
-## Target Features (Unreal Engine Implementation)
-The following core Munchkin gameplay mechanics are planned for the Unreal Engine version:
+## Target Features (final version)
+The following core Munchkin gameplay mechanics are planned for the final version:
 
 1.  **Deck Mechanics**:
     * Randomized Door and Treasure decks.
@@ -32,8 +32,8 @@ The following core Munchkin gameplay mechanics are planned for the Unreal Engine
 
 ## Development Roadmap & Future Goals
 * **Phase 1 (Current Focus):**
-    * Set up the Unreal Engine project structure.
-    * Refactor and adapt core C++ logic (cards, player state, basic rules) for Unreal.
+    * Set up the SFML project structure.
+    * Refactor and adapt core C++ logic (cards, player state, basic rules) with SFML.
     * Implement basic card drawing and management UI.
     * Develop the core turn structure and phase transitions.
     * Implement a basic combat resolution system.
@@ -49,25 +49,5 @@ The following core Munchkin gameplay mechanics are planned for the Unreal Engine
     * Support for expansions (potentially via data-driven card definitions).
     * Persistent player profiles or statistics (possible database integration).
 
----
-
-## Getting Started (Unreal Project)
-
-### Prerequisites
-* **Unreal Engine** [Specify Version, e.g., 5.3 or later]
-* **Git** for version control.
-* An IDE compatible with Unreal Engine (e.g., Visual Studio with C++ workload, Rider for Unreal Engine).
-
-### Steps
-1.  Clone the repository:
-    ```bash
-    git clone [https://github.com/Rappich/MunchkinProject](https://github.com/Rappich/MunchkinProject)
-    ```
-2.  Navigate to the project directory.
-3.  Generate project files (if needed, often done by right-clicking the `.uproject` file).
-4.  Open the `.uproject` file with Unreal Engine.
-5.  Compile and run the project from the Unreal Editor.
-
----
 
 *(Note: The original, unfinished C++ console code might still exist in the repository history or a specific branch/folder for reference, but it is not the target platform for future development.)*
